@@ -101,61 +101,58 @@ def relu_backward(dout, cache):
     x = cache
 
     # Calculate dx
-    relu = np.maximum(x, 0)
-    dx = np.multiply(dout, np.sign(relu))
+    dx = np.multiply(dout, (x > 0))
     return dx
 
 def fc_forward(x, w, b):
 
-    out = None
-    ###########################################################################
-    # TODO: Implement the affine forward pass. Store the result in out. You   #
-    # will need to reshape the input into rows.                               #
-    ###########################################################################
-    pass
-    ###########################################################################
-    #                             END OF YOUR CODE                            #
-    ###########################################################################
+    # Get dimension
+    N, D = x.shape[0], x.size / x.shape[0]
+
+    # Calculate output
+    out = np.dot(x.reshape(N, D), w) + b
+
+    # Saving cache
     cache = (x, w, b)
     return out, cache
 
 
 def fc_backward(dout, cache):
- 
+
+    # Process cache
     x, w, b = cache
-    dx, dw, db = None, None, None
-    ###########################################################################
-    # TODO: Implement the affine backward pass.                               #
-    ###########################################################################
-    pass
-    ###########################################################################
-    #                             END OF YOUR CODE                            #
-    ###########################################################################
+
+    # Calculate gradient
+    N, D = x.shape[0], w.shape[0]
+    dx = np.dot(dout, w.T).reshape(x.shape)
+    dw = np.dot(x.reshape(N, D).T, dout)
+    db = np.sum(dout, axis=0)
+
     return dx, dw, db
 
 
 def softmax_forward(x):
-    out = None
-    ###########################################################################
-    # TODO: Implement the affine forward pass. Store the result in out. You   #
-    # will need to reshape the input into rows.                               #
-    ###########################################################################
-    pass
-    ###########################################################################
-    #                             END OF YOUR CODE                            #
-    ###########################################################################
-    cache = x
-    return out, cache
+
+    # Calculate output
+    probs = np.exp(x - np.max(x, axis=1, keepdims=True))
+    out = probs / np.sum(probs, axis=1, keepdims=True)
+
+    return out
 
 
-def softmax_backward(dout, cache):
-    x = cache
-    dx = None
-    ###########################################################################
-    # TODO: Implement the affine backward pass.                               #
-    ###########################################################################
-    pass
-    ###########################################################################
-    #                             END OF YOUR CODE                            #
-    ###########################################################################
-    return dx
+def softmax_loss(x, y):
+
+    # Calculate softmax
+    probs = np.exp(x - np.max(x, axis=1, keepdims=True))
+    probs /= np.sum(probs, axis=1, keepdims=True)
+
+    # Calculate loss
+    N = x.shape[0]
+    loss = -np.sum(np.log(probs[np.arange(N), y])) / N
+
+    # Calculate gradient
+    dx = probs.copy()
+    dx[np.arange(N), y] -= 1
+    dx /= N
+
+    return loss, dx
