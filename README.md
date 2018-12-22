@@ -17,7 +17,7 @@ In this project, we implement a neural network to predict the class labels of a 
 - The dataset is cultured from [the tiny ImageNet dataset](https://tiny-imagenet.herokuapp.com/). You may want to visit the source page for more details
 - Most of training images are color images, and each of them has 64 * 64 pixels. The others are grey images, and each of them has 64 * 64 pixels as well.
 
-##The Classifier
+## The Classifier
 - Input: an image.
 
 - Output: the confidence scores of all classes. If the input image is belong to one of the 20 classes, the confidence score corresponding to its true class is expected to be the largest one. Otherwise, the confidence score of a label “unknown” is supposed to be the largest one. Thus, you indeed have 21 class labels.
