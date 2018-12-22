@@ -22,7 +22,7 @@ In this project, we implement a neural network to predict the class labels of a 
 
 - Output: the confidence scores of all classes. If the input image is belong to one of the 20 classes, the confidence score corresponding to its true class is expected to be the largest one. Otherwise, the confidence score of a label “unknown” is supposed to be the largest one. Thus, you indeed have 21 class labels.
 
-##The Performance Measure
+## The Performance Measure
 - For each testing image, your classifier will output the top three class labels with the highest confidence scores. If the true class label is one of the top three labels, we will say your classifier has correctly predicted the class label of the input image; otherwise, your classifier made a mistake.
 
 ## Training
