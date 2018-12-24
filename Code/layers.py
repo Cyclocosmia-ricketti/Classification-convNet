@@ -1,10 +1,13 @@
+# coding = utf-8
 import numpy as np
+from im2col import * 
 
-def conv_forward(x, w, b, stride, pad):
+def conv_forward(x, w, b, conv_param):
 
     # Get input dimensions
     N, C, H, W = x.shape
     num_filters, _, filter_height, filter_width = w.shape
+    stride, pad = conv_param['stride'], conv_param['pad']
 
     # Check dimensions
     assert (W + 2 * pad - filter_width) % stride == 0, 'width does not work'
@@ -23,13 +26,14 @@ def conv_forward(x, w, b, stride, pad):
     out = out.transpose(3, 0, 1, 2)
 
     # Saving cache
-    cache = (x, w, b, stride, pad, x_cols)
+    cache = (x, w, b, conv_param, x_cols)
     return out, cache
 
 def conv_backward(dout, cache):
 
     # Process cache
-    x, w, b, stride, pad, x_cols = cache
+    x, w, b, conv_param, x_cols = cache
+    stride, pad = conv_param['stride'], conv_param['pad']
 
     # Calculate db
     db = np.sum(dout, axis=(0, 2, 3))
@@ -41,16 +45,16 @@ def conv_backward(dout, cache):
 
     # Calculate dx
     dx_cols = w.reshape(num_filters, -1).T.dot(dout_reshaped)
-    dx = col2im(dx_cols, x.shape[0], x.shape[1], x.shape[2], x.shape[3],
+    dx = col2im(dx_cols, (x.shape[0], x.shape[1], x.shape[2], x.shape[3]),
                        filter_height, filter_width, pad, stride)
 
     return dx, dw, db
 
-def max_pooling_forward(x, height, width, stride):
+def max_pooling_forward(x, pool_param):
 
     # Get dimensions
     N, C, H, W = x.shape
-
+    height, width, stride = pool_param['height'], pool_param['width'], pool_param['stride']
     # Check dimensions
     assert (H - height) % stride == 0, 'Invalid height'
     assert (W - width) % stride == 0, 'Invalid width'
@@ -66,10 +70,10 @@ def max_pooling_forward(x, height, width, stride):
     out = x_cols_max.reshape(out_height, out_width, N, C).transpose(2, 3, 0, 1)
 
     # Saving cache
-    cache = (x, x_cols, x_cols_argmax, height, width, stride)
+    cache = (x, x_cols, x_cols_argmax, pool_param)
     return out, cache
 
-def max_pool_backward_im2col(dout, cache):
+def max_pool_backward(dout, cache):
 
     # Process cache
     x, x_cols, x_cols_argmax, height, width, stride = cache
@@ -81,7 +85,7 @@ def max_pool_backward_im2col(dout, cache):
     dout_reshaped = dout.transpose(2, 3, 0, 1).flatten()
     dx_cols = np.zeros_like(x_cols)
     dx_cols[x_cols_argmax, np.arange(dx_cols.shape[1])] = dout_reshaped
-    dx = col2im_indices(dx_cols, (N * C, 1, H, W), height, width, padding=0, stride=stride)
+    dx = col2im(dx_cols, (N * C, 1, H, W), height, width, padding=0, stride=stride)
     dx = dx.reshape(x.shape)
 
     return dx
@@ -156,3 +160,43 @@ def softmax_loss(x, y):
     dx /= N
 
     return loss, dx
+
+#some sandwich layers
+def conv_relu_forward(x, w, b, conv_param):
+    a, conv_cache = conv_forward(x, w, b, conv_param)
+    out, relu_cache = relu_forward(a)
+    cache = (conv_cache, relu_cache)
+    return out, cache
+
+def conv_relu_backward(dout, cache):
+    conv_cache, relu_cache = cache
+    d_relu = relu_backward(dout, relu_cache)
+    dx, dw, db = conv_backward(d_relu, conv_cache)
+    return dx, dw, db 
+
+def conv_relu_pool_forward(x, w, b, conv_param, pool_param):
+    a, conv_cache = conv_forward(x, w, b, conv_param)
+    r, relu_cache = relu_forward(a)
+    out, pool_cache = max_pooling_forward(r, pool_param)
+    cache = (conv_cache, relu_cache, pool_cache)
+    return out, cache
+
+def conv_relu_pool_backward(dout,cache):
+    conv_cache, relu_cache, pool_cache = cache
+    d_pool = max_pool_backward(dout,pool_cache)
+    d_relu = relu_backward(d_pool, relu_cache)
+    dx, dw, db = conv_backward(d_relu, conv_cache)
+    return dx, dw, db
+
+def fc_relu_forward(x, w, b):
+    a, fc_cache = fc_forward(x, w, b)
+    out, relu_cache = relu_forward(a)
+    cache = (fc_cache, relu_cache)
+    return out, cache
+
+def fc_relu_backward(dout, cache):
+    fc_cache, relu_cache = cache
+    d_relu = relu_backward(dout, relu_cache)
+    dx, dw, db = fc_backward(d_relu, fc_cache)
+    return dx, dw, db
+    
