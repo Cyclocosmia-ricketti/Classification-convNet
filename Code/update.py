@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def adam(x, dx, config=None):
 
     if config is None: config = {}
@@ -12,15 +13,14 @@ def adam(x, dx, config=None):
     config.setdefault('t', 1)
 
     config['t'] += 1
-    #Update biased first moment estimate
+    # Update biased first moment estimate
     config['m'] = config['beta1'] * config['m'] + (1 - config['beta1']) * dx
-    #Update biased second raw moment estimate 
+    # Update biased second raw moment estimate
     config['v'] = config['beta2'] * config['v'] + (1 - config['beta2']) * (dx ** 2) 
-    #Compute the correction factor
+    # Compute the correction factor
     alpha = config['learning_rate'] * np.sqrt(1 - config['beta2'] ** config['t']) / (1 - config['beta1'] ** config['t'])
-    #Update parameters
+    # Update parameters
     epsilon_corrected = config['epsilon'] * np.sqrt(1 - config['beta2'] ** config['t'])
     next_x = x - alpha * config['m'] / (np.sqrt(config['v']) + epsilon_corrected) 
-
 
     return next_x, config

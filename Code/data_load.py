@@ -26,6 +26,14 @@ def load_TinyImagenet(dataset_dir):
     Y = np.array(Y)
     return X, Y
 
+
+def preprocess(images, y_labels, batch_size = 50,steps = 200):
+    # wait for progress
+    images_batch = images.reshape([-1, batch_size, 64, 64, 3])
+    y_labels_batch = y_labels.reshape([-1, batch_size, 1])
+    return images_batch, y_labels_batch
+
+
 if __name__ == '__main__':
     images, tag = load_TinyImagenet('../dataset')
     first_image = images[0]

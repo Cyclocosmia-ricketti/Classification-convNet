@@ -1,7 +1,10 @@
 # coding = utf-8
 
 import numpy as np
-from layers import *
+from .layers import *
+import pickle
+import os
+
 
 class cnn_AlexNet(object):
     def __init__(self, batch_size, input_dim=(3, 32, 32), num_filters=(32), filter_size=(7),
@@ -24,10 +27,31 @@ class cnn_AlexNet(object):
             self.params[k] = v.astype(dtype)
 
     def saving(self, dir):
-        pass
+        if(not os.path.exists(dir)):
+            os.makedirs(dir)
+        print("model saving...")
+        fp = open(dir + '/' + 'params.txt', 'wb')
+        print("saving successfully!")
+        pickle.dump(self.params)
+        fp.close()
 
     def restore(self, dir):
-        pass
+        if (os.path.exists(dir)):
+            fp = open(dir, 'rb')
+            print("model loading...")
+            self.params = pickle.load(fp)
+            print("loading successfully! ")
+            fp.close()
+        else:
+            raise AssertionError("file does not exist! Please train first.")
+
+    def forward(self, x):
+        prob = {}
+        return prob
+
+    def iteration(self, x, y):
+        loss = {}
+        return loss
 
     def loss(self, x, y=None):
         w_conv1, b_conv1 = self.params['w_conv1'], self.params['b_conv1']

@@ -1,6 +1,7 @@
 # coding = utf-8
 import numpy as np
-from im2col import * 
+from .im2col import *
+
 
 def conv_forward(x, w, b, conv_param):
 
@@ -29,6 +30,7 @@ def conv_forward(x, w, b, conv_param):
     cache = (x, w, b, conv_param, x_cols)
     return out, cache
 
+
 def conv_backward(dout, cache):
 
     # Process cache
@@ -49,6 +51,7 @@ def conv_backward(dout, cache):
                        filter_height, filter_width, pad, stride)
 
     return dx, dw, db
+
 
 def max_pooling_forward(x, pool_param):
 
@@ -73,6 +76,7 @@ def max_pooling_forward(x, pool_param):
     cache = (x, x_cols, x_cols_argmax, pool_param)
     return out, cache
 
+
 def max_pool_backward(dout, cache):
 
     # Process cache
@@ -90,6 +94,7 @@ def max_pool_backward(dout, cache):
 
     return dx
 
+
 def relu_forward(x):
 
     # Calculate output
@@ -99,6 +104,7 @@ def relu_forward(x):
     cache = x
     return out, cache
 
+
 def relu_backward(dout, cache):
 
     # Process cache
@@ -107,6 +113,7 @@ def relu_backward(dout, cache):
     # Calculate dx
     dx = np.multiply(dout, (x > 0))
     return dx
+
 
 def fc_forward(x, w, b):
 
@@ -161,18 +168,21 @@ def softmax_loss(x, y):
 
     return loss, dx
 
-#some sandwich layers
+
+# some sandwich layers
 def conv_relu_forward(x, w, b, conv_param):
     a, conv_cache = conv_forward(x, w, b, conv_param)
     out, relu_cache = relu_forward(a)
     cache = (conv_cache, relu_cache)
     return out, cache
 
+
 def conv_relu_backward(dout, cache):
     conv_cache, relu_cache = cache
     d_relu = relu_backward(dout, relu_cache)
     dx, dw, db = conv_backward(d_relu, conv_cache)
     return dx, dw, db 
+
 
 def conv_relu_pool_forward(x, w, b, conv_param, pool_param):
     a, conv_cache = conv_forward(x, w, b, conv_param)
@@ -181,6 +191,7 @@ def conv_relu_pool_forward(x, w, b, conv_param, pool_param):
     cache = (conv_cache, relu_cache, pool_cache)
     return out, cache
 
+
 def conv_relu_pool_backward(dout,cache):
     conv_cache, relu_cache, pool_cache = cache
     d_pool = max_pool_backward(dout,pool_cache)
@@ -188,15 +199,16 @@ def conv_relu_pool_backward(dout,cache):
     dx, dw, db = conv_backward(d_relu, conv_cache)
     return dx, dw, db
 
+
 def fc_relu_forward(x, w, b):
     a, fc_cache = fc_forward(x, w, b)
     out, relu_cache = relu_forward(a)
     cache = (fc_cache, relu_cache)
     return out, cache
 
+
 def fc_relu_backward(dout, cache):
     fc_cache, relu_cache = cache
     d_relu = relu_backward(dout, relu_cache)
     dx, dw, db = fc_backward(d_relu, fc_cache)
     return dx, dw, db
-    
