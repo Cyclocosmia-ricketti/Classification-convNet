@@ -1,26 +1,26 @@
 import numpy as np
 
-def adam(x, dx, config=None):
+def adam(x, dx, adam_params=None):
 
-    if config is None: config = {}
-    config.setdefault('learning_rate', 1e-3)
-    config.setdefault('beta1', 0.9)
-    config.setdefault('beta2', 0.999)
-    config.setdefault('epsilon', 1e-8)
-    config.setdefault('m', np.zeros_like(x))
-    config.setdefault('v', np.zeros_like(x))
-    config.setdefault('t', 1)
+    if adam_params is None: adam_params = {}
+    adam_params.setdefault('learning_rate', 1e-3)
+    adam_params.setdefault('beta1', 0.9)
+    adam_params.setdefault('beta2', 0.999)
+    adam_params.setdefault('epsilon', 1e-8)
+    adam_params.setdefault('m', np.zeros_like(x))
+    adam_params.setdefault('v', np.zeros_like(x))
+    adam_params.setdefault('t', 1)
 
-    config['t'] += 1
+    adam_params['t'] += 1
     #Update biased first moment estimate
-    config['m'] = config['beta1'] * config['m'] + (1 - config['beta1']) * dx
+    adam_params['m'] = adam_params['beta1'] * adam_params['m'] + (1 - adam_params['beta1']) * dx
     #Update biased second raw moment estimate 
-    config['v'] = config['beta2'] * config['v'] + (1 - config['beta2']) * (dx ** 2) 
+    adam_params['v'] = adam_params['beta2'] * adam_params['v'] + (1 - adam_params['beta2']) * (dx ** 2) 
     #Compute the correction factor
-    alpha = config['learning_rate'] * np.sqrt(1 - config['beta2'] ** config['t']) / (1 - config['beta1'] ** config['t'])
+    alpha = adam_params['learning_rate'] * np.sqrt(1 - adam_params['beta2'] ** adam_params['t']) / (1 - adam_params['beta1'] ** adam_params['t'])
     #Update parameters
-    epsilon_corrected = config['epsilon'] * np.sqrt(1 - config['beta2'] ** config['t'])
-    next_x = x - alpha * config['m'] / (np.sqrt(config['v']) + epsilon_corrected) 
+    epsilon_corrected = adam_params['epsilon'] * np.sqrt(1 - adam_params['beta2'] ** adam_params['t'])
+    x_updated = x - alpha * adam_params['m'] / (np.sqrt(adam_params['v']) + epsilon_corrected) 
 
 
-    return next_x, config
+    return x_updated, adam_params
