@@ -28,7 +28,7 @@ def load_TinyImagenet(dataset_dir):
 
 
 def preprocess(images, y_labels, batch_size = 50,steps = 200):
-    # wait for progress
+    # wait for progress : add minus average
     images_batch = images.reshape([-1, batch_size, 64, 64, 3])
     y_labels_batch = y_labels.reshape([-1, batch_size, 1])
     return images_batch, y_labels_batch
