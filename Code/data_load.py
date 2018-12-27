@@ -27,12 +27,24 @@ def load_TinyImagenet(dataset_dir):
     return X, Y
 
 
-def preprocess(images, y_labels, batch_size = 50,steps = 200):
-    # wait for progress : add minus average
+def preprocess(images, y_labels, batch_size=50, steps = 200):
+    # Minus average
+    rgb_aver = np.mean(images, axis=0)
+    rgb_aver = np.mean(rgb_aver, axis=0)
+    rgb_aver = np.mean(rgb_aver, axis=0)
+    rgb_aver = rgb_aver.repeat(10000 * 64 * 64).reshape([10000, 64, 64, 3])
+    images = images - rgb_aver
+
+    # Disorder order
+    index = [i for i in range(len(y_labels))]
+    random.shuffle(index)
+    images = images[index]
+    y_labels = y_labels[index]
+
+    # cut into batch_size
     images_batch = images.reshape([-1, batch_size, 64, 64, 3])
     y_labels_batch = y_labels.reshape([-1, batch_size, 1])
     return images_batch, y_labels_batch
-
 
 if __name__ == '__main__':
     images, tag = load_TinyImagenet('../dataset')
