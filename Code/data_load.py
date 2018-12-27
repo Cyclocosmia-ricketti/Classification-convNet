@@ -44,6 +44,7 @@ def preprocess(images, y_labels, batch_size=50, steps = 200):
     # cut into batch_size
     images_batch = images.reshape([-1, batch_size, 64, 64, 3])
     y_labels_batch = y_labels.reshape([-1, batch_size, 1])
+    
     return images_batch, y_labels_batch
 
 if __name__ == '__main__':
