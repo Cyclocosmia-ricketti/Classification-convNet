@@ -14,6 +14,12 @@ if __name__ == '__main__':
     model_dir = '../model/params.txt'
     model = cnn_AlexNet()
     model.restore(model_dir)
-    image = imread('../test_img.jpg')
-    image = image.transpose(2, 0, 1)
-    test(model, image)
+    pre_dir = '../test/'
+    while 1:
+        print('please input image name:')
+        name = input()
+        if name == 'exit':
+            break
+        image = imread(pre_dir + name)
+        image = image.transpose(2, 0, 1)
+        test(model, image)
