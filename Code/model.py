@@ -1,19 +1,19 @@
 # coding = utf-8
+
 import numpy as np
 from layers import *
+import pickle
+import os
+
 
 class cnn_AlexNet(object):
-    def __init__(self, batch_size, input_dim=(3, 64, 64), num_filters=(128), filter_size=(3),
+    def __init__(self, batch_size=50, input_dim=(3, 64, 64), num_filters=(32,), filter_size=(3,),
                  hidden_dim=100, num_classes=20, weight_scale=1e-3, reg=0.0,
                  dtype=np.float32):
             
         self.batch_size = batch_size
         C, H, W = input_dim 
         F1, HH1, WW1 = num_filters[0], filter_size[0], filter_size[0]
-
-        self.fc_cache1 = ()
-        self.fc_cache2 = ()
-        self.pool_cache1 = ()
 
         self.params = {}
         self.params['w_conv1'] = weight_scale * np.random.randn(F1, C, HH1, WW1)
@@ -27,10 +27,23 @@ class cnn_AlexNet(object):
             self.params[k] = v.astype(dtype)
 
     def saving(self, dir):
-        pass
+        if(not os.path.exists(dir)):
+            os.makedirs(dir)
+        print("model saving...")
+        fp = open(dir + '/' + 'params.txt', 'wb')
+        pickle.dump(self.params, fp)
+        print("saving successfully!") 
+        fp.close()
 
     def restore(self, dir):
-        pass
+        if (os.path.exists(dir)):
+            fp = open(dir, 'rb')
+            print("model loading...")
+            self.params = pickle.load(fp)
+            print("loading successfully! ")
+            fp.close()
+        else:
+            raise AssertionError("file does not exist! Please train first.")
 
     def forward(self, x):
         w_conv1, b_conv1 = self.params['w_conv1'], self.params['b_conv1']
@@ -46,12 +59,13 @@ class cnn_AlexNet(object):
 
         fc_out1, self.fc_cache1 = fc_relu_forward(pool_out1, w_fc1, b_fc1)
         fc_out2, self.fc_cache2 = fc_forward(fc_out1, w_fc2, b_fc2)
+        prob = softmax_forward(fc_out2)
 
-        return fc_out2
-        
+        return prob, fc_out2
+
     def iteration(self, x, y):
         #forward
-        fc_out2 = self.forward(x)
+        _, fc_out2 = self.forward(x)
         #backward
         loss, grads = 0, {}
         loss, dout = softmax_loss(fc_out2, y)
@@ -60,6 +74,7 @@ class cnn_AlexNet(object):
         dx_conv1, grads['w_conv1'], grads['b_conv1'] = conv_relu_pool_backward(dx_fc1, self.pool_cache1)
 
         return loss, grads
+
 
 
 
