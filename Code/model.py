@@ -59,7 +59,6 @@ class cnn_AlexNet(object):
 
         fc_out1, self.fc_cache1 = fc_relu_forward(pool_out1, w_fc1, b_fc1)
         fc_out2, self.fc_cache2 = fc_forward(fc_out1, w_fc2, b_fc2)
-        # Change: add softmax in forward
         prob = softmax_forward(fc_out2)
 
         return prob, fc_out2
@@ -76,32 +75,6 @@ class cnn_AlexNet(object):
 
         return loss, grads
 
-    def loss(self, x, y=None):
-        w_conv1, b_conv1 = self.params['w_conv1'], self.params['b_conv1']
-        w_fc1, b_fc1 = self.params['w_fc1'], self.params['b_fc1']
-        w_fc2, b_fc2 = self.params['w_fc2'], self.params['b_fc2']
-
-        filter_size = w_conv1.shape[2]
-        conv_param = {'stride': 1, 'pad': (filter_size - 1) // 2}
-        pool_param = {'height': 2, 'width': 2, 'stride': 2}
-
-        #forward
-        pool_out1, pool_cache1 = conv_relu_pool_forward(x, w_conv1, b_conv1, conv_param, pool_param)
-
-        fc_out1, fc_cache1 = fc_relu_forward(pool_out1, w_fc1, b_fc1)
-        fc_out2, fc_cache2 = fc_forward(fc_out1, w_fc2, b_fc2)
-
-        if y is None:
-            return softmax_forward(fc_out2)
-        
-        #backward
-        loss, grads = 0, {}
-        loss, dout = softmax_loss(fc_out2, y)
-        dx_fc2, grads['w_fc2'], grads['b_fc2'] = fc_backward(dout, fc_cache2)
-        dx_fc1, grads['w_fc1'], grads['b_fc1'] = fc_relu_backward(dx_fc2, fc_cache1)
-        dx_conv1, grads['w_conv1'], grads['b_conv1'] = conv_relu_pool_backward(dx_fc1, pool_cache1)
-
-        return loss, grads
 
 
 

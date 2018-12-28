@@ -2,6 +2,7 @@ import numpy as np
 import os
 from scipy.misc import imread
 import matplotlib.pyplot as plt
+import random
 
 
 def load_TinyImagenet(dataset_dir):
@@ -41,16 +42,17 @@ def preprocess(images, y_labels, batch_size=50, steps = 200):
     images = images[index]
     y_labels = y_labels[index]
 
-    # cut into batch_size
+    # cut into batch_size 200*50*64*64*3
     images_batch = images.reshape([-1, batch_size, 64, 64, 3])
     y_labels_batch = y_labels.reshape([-1, batch_size, 1])
-    
     return images_batch, y_labels_batch
+
 
 if __name__ == '__main__':
     images, tag = load_TinyImagenet('../dataset')
-    first_image = images[0]
-    first_tag = tag[0]
+    images, tag = preprocess(images, tag)
+    first_image = images[0][0]
+    first_tag = tag[0][0]
     plt.imshow(first_image)  # 显示图片
     plt.axis('off')  # 不显示坐标轴
     plt.show()
