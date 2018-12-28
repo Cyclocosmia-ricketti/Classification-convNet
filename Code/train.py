@@ -6,7 +6,7 @@ from .update import adam
 def check_accuracy(model, x_batch, y_batch, batch_size=100):
     accuary = 0
     correct_num = 0
-    N = x_batch.shape[0]
+    N = x_batch.shape[0] * batch_size
     for i in range(N):
         scores, _ = model.forward(x_batch[i])
         top_three = np.argsort(scores)[:, -3:]
