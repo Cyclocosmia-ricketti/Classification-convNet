@@ -20,12 +20,14 @@ In this project, we implement a neural network to predict the class labels of a 
 ## The Classifier
 - Input: an image.
 
-- Output:  the confidence scores of all classes. If the input image is belong to one of the 20 classes, the confidence score corresponding to its true class is expected to be the largest one. Otherwise, the confidence score of a label “unknown” is supposed to be the largest one. Thus, you indeed have 21 class labels.
+- Output:  the confidence scores of all classes. If the input image is belong to one of the 20 classes, the confidence score corresponding to its true class is expected to be the largest one. Otherwise, the confidence score of a label “unknown” is supposed to be the largest one. Thus, we indeed have 21 class labels.
 
 ## The Performance Measure
-- For each testing image, your classifier will output the top three class labels with the highest confidence scores. If the true class label is one of the top three labels, we will say your classifier has correctly predicted the class label of the input image; otherwise, your classifier made a mistake.
+- For each testing image, the classifier will output the top three class labels with the highest confidence scores. If the true class label is one of the top three labels, we will say the classifier has correctly predicted the class label of the input image; otherwise, the classifier made a mistake.
 
 ## Training
+- In the actual training, we searched the Internet for 1000 64*64 RGB images as training materials for the unknown class.
+
 - We choose six different structures and test their performance on this problem separately. These six structures are as follows. 
 
 | structure1 | structure2 | structure3 | structure4 | structure5 | structure6 |
