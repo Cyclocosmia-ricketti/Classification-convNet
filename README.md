@@ -25,14 +25,25 @@ In this project, we implement a neural network to predict the class labels of a 
 ## The Performance Measure
 - For each testing image, your classifier will output the top three class labels with the highest confidence scores. If the true class label is one of the top three labels, we will say your classifier has correctly predicted the class label of the input image; otherwise, your classifier made a mistake.
 
-## Structure
+## Training
 - We choose six different structures and test their performance on this problem separately. These six structures are as follows. 
 
 | structure1 | structure2 | structure3 | structure4 | structure5 | structure6 |
 | :------:   | :------:  | :------:    | :------:   | :------:  | :------:    |
-| 4-layers model | 6-layers model | residual model |VGG-like model1 | VGG-like model2 | VGG-like model3 |
+| 4-layers model | 6-layers model | residual model |VGG-like model 1 | VGG-like model 2 | VGG-like model 3 |
 | conv_relu(32,3,3)<br>max_pooling(2,2)<br>fc(100)<br>fc(21) |conv_relu_bn(32,5,5)<br>max_pooling(2,2)<br>conv_relu(64,3,3)<br>conv_relu_bn(64,3,3)<br>max_pooling(2,2)<br>fc(128)<br>fc(21) | conv_relu_bn(32,5,5)<br>max_pooling(2,2)<br>res_block<br>res_block<br>mmax_pooling(2,2)<br>fc(256)<br>fc(21) |conv_relu(32,3,3)<br>max_pooling(2,2)<br>conv_relu_bn(64,3,3)<br>max_pooling(2,2)<br>conv_relu(128,3,3)<br>conv_relu_bn(128,3,3)<br>max_pooling(2,2)<br>conv_relu(256,3,3)<br>conv_relu_bn(256,3,3)<br>max_pooling(2,2)<br>fc(256)<br>fc(256)<br>fc(21) |conv_relu(32,3,3)<br>max_pooling(2,2)<br>conv_relu_bn(64,3,3)<br>max_pooling(2,2)<br>conv_relu(128,3,3)<br>conv_relu_bn(128,3,3)<br>max_pooling(2,2)<br>conv_relu(256,3,3)<br>conv_relu_bn(256,3,3)<br>max_pooling(2,2)<br>fc(1024)<br>fc(1024)<br>fc(21) | conv_relu(64,3,3)<br>max_pooling(2,2)<br>conv_relu_bn(128,3,3)<br>max_pooling(2,2)<br>conv_relu(256,3,3)<br>conv_relu_bn(256,3,3)<br>max_pooling(2,2)<br>conv_relu(512,3,3)<br>conv_relu_bn(512,3,3)<br>max_pooling(2,2)<br>fc(1024)<br>fc(1024)<br>fc(21)|
 
-## Training
+- We trained 20 epochs on the training set with six different models and tested the accuracy of the model on the validation set after each epoch. We selected the best performance of 20 epochs as the best performance under one structure.
+
 
 ## Testing
+- The test results are as follows.(The accuracy below is based on the top-3 criterion.)
+
+| structure1 | structure2 | structure3 | structure4 | structure5 | structure6 |
+| :------:   | :------:  | :------:    | :------:   | :------:  | :------:    |
+| 4-layers model | 6-layers model | residual model |VGG-like model 1 | VGG-like model 2 | VGG-like model 3 |
+| 0.715 | 0.724 | 0.753 | 0.835 | 0.768 | 0.807 |
+- Based on the performance of the test, we chose VGG-like model 1 as our final model. Its forward propagation process is as follows.
+
+<div align=center><img src="./pic/structure.jpg"/></div>
+
