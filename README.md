@@ -14,8 +14,8 @@ In this project, we implement a neural network to predict the class labels of a 
 
 
 
-- The dataset is cultured from [the tiny ImageNet dataset](https://tiny-imagenet.herokuapp.com/). You may want to visit the source page for more details
-- All training images are color images, and each of them has 64 * 64 pixels. The size of the testing images is the same as the training images
+- The dataset is cultured from [the tiny ImageNet dataset](https://tiny-imagenet.herokuapp.com/). You may want to visit the source page for more details.
+- All training images are color images, and each of them has 64 * 64 pixels. The size of the testing images is the same as the training images.
 
 ## The Classifier
 - Input: an image.
